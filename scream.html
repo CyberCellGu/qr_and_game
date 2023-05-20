@@ -20,18 +20,20 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
     }
 
     h1 {
       text-align: center;
-      color: #333;
       margin-bottom: 30px;
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     #sound-bar {
-      width: 400px;
-      height: 30px;
+      width: 150px;
+      height: 450px;
       background-color: #eaeaea;
       border-radius: 15px;
       overflow: hidden;
@@ -39,9 +41,12 @@
     }
 
     #sound-level {
-      height: 100%;
+      width: 100%;
+      height: 0;
       border-radius: 15px;
-      transition: width 0.2s ease, background-color 0.2s ease;
+      transition: height 0.2s ease, background-color 0.2s ease;
+      position: absolute;
+      bottom: 0;
     }
   </style>
 </head>
@@ -94,9 +99,9 @@
           // Limit the adjusted sound level to a maximum of 1
           adjustedRms = Math.min(adjustedRms, 1);
 
-          // Update the sound level bar width
+          // Update the sound level bar height
           var soundLevelElement = document.getElementById('sound-level');
-          soundLevelElement.style.width = (adjustedRms * 100) + '%';
+          soundLevelElement.style.height = (adjustedRms * 100) + '%';
 
           // Update the sound level bar color
           var hue = Math.round(adjustedRms * 120); // Map sound level to hue value between 0 and 120
