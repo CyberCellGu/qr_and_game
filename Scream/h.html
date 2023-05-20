@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Scream To Win</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('https://www.three.co.uk/blog/smiling-emojis-actually-mean/_jcr_content/root/container/container-main-section/column-left/image_copy.coreimg.85.1600.jpeg/1673895440026/bloghome-emojis.jpeg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #sound-bar {
+      width: 150px;
+      height: 450px;
+      background-color: #eaeaea;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #sound-level {
+      width: 100%;
+      height: 0;
+      border-radius: 15px;
+      transition: height 0.2s ease, background-color 0.2s ease;
+      position: absolute;
+      bottom: 0;
+      transform: scaleY(-1); /* Flip the bar */
+    }
+img{
+margin-bottom: ;
+}
+    #percentage-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #000000;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+  <img src="icon.png" alt="">
+    <h1>Scream To Win</h1>
+    <div id="sound-bar">
+      <div id="sound-level" data-level=""></div>
+      <div id="percentage-label"></div>
+    </div>
+  </div>
+
+  <script>
+    // Access the user's microphone using the getUserMedia function
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        // Create an audio context
+        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Create an audio source from the microphone stream
+        var source = audioContext.createMediaStreamSource(stream);
+
+        // Create a script processor node to process the audio data
+        var scriptNode = audioContext.createScriptProcessor(1024, 1, 1);
+
+        // Connect the source to the script processor
+        source.connect(scriptNode);
+
+        // Connect the script processor to the audio context destination
+        scriptNode.connect(audioContext.destination);
+
+        // Define the sensitivity factor (adjust as needed)
+        var sensitivityFactor = 2;
+
+        // Process the audio data
+        scriptNode.onaudioprocess = function(audioProcessingEvent) {
+          // Get the sound data from the input buffer
+          var inputBuffer = audioProcessingEvent.inputBuffer;
+          var inputData = inputBuffer.getChannelData(0);
+
+          // Calculate the sound level (RMS value) of the input data
+          var sum = 0;
+          for (var i = 0; i < inputData.length; i++) {
+            sum += inputData[i] * inputData[i];
+          }
+          var rms = Math.sqrt(sum / inputData.length);
+
+          // Adjust the sound level sensitivity
+          var adjustedRms = rms * sensitivityFactor;
+
+          // Limit the adjusted sound level to a maximum of 1
+          adjustedRms = Math.min(adjustedRms, 1);
+
+          // Update the sound level bar height
+          var soundLevelElement = document.getElementById('sound-level');
+          soundLevelElement.style.height = (adjustedRms * 100) + '%';
+          soundLevelElement.setAttribute('data-level', Math.round(adjustedRms * 100) + '%');
+
+          // Update the sound level bar color
+          var hue = Math.round(adjustedRms * 120); // Map sound level to hue value between 0 and 120
+          soundLevelElement.style.backgroundColor = 'hsl(' + hue + ', 70%, 50%)';
+
+          // Update the percentage label
+          var percentageLabel = document.getElementById('percentage-label');
+          percentageLabel.innerText = Math.round(adjustedRms * 100) + '%';
+
+          var isWinner = false;
+          if (adjustedRms >= 1 && !isWinner) {
+  soundLevelElement.style.height = '100%';
+  soundLevelElement.setAttribute('data-level', '100%');
+  percentageLabel.innerText = "Congrats! You are a winner";
+  isWinner = true; 
+          // Set the flag to true
+          scriptNode.disconnect();
+  // Trigger balloon animation
+          }
+        };
+      })
+      .catch(function(err) {
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
