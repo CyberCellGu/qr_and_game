@@ -47,6 +47,17 @@
       transition: height 0.2s ease, background-color 0.2s ease;
       position: absolute;
       bottom: 0;
+      transform: scaleY(-1); /* Flip the bar */
+    }
+
+    #percentage-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #000000;
+      font-size: 14px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -54,7 +65,8 @@
   <div class="container">
     <h1>Sound Level Detection</h1>
     <div id="sound-bar">
-      <div id="sound-level"></div>
+      <div id="sound-level" data-level=""></div>
+      <div id="percentage-label"></div>
     </div>
   </div>
 
@@ -102,10 +114,15 @@
           // Update the sound level bar height
           var soundLevelElement = document.getElementById('sound-level');
           soundLevelElement.style.height = (adjustedRms * 100) + '%';
+          soundLevelElement.setAttribute('data-level', Math.round(adjustedRms * 100) + '%');
 
           // Update the sound level bar color
           var hue = Math.round(adjustedRms * 120); // Map sound level to hue value between 0 and 120
           soundLevelElement.style.backgroundColor = 'hsl(' + hue + ', 70%, 50%)';
+
+          // Update the percentage label
+          var percentageLabel = document.getElementById('percentage-label');
+          percentageLabel.innerText = Math.round(adjustedRms * 100) + '%';
         };
       })
       .catch(function(err) {
