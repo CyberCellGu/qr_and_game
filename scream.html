@@ -123,6 +123,17 @@
           // Update the percentage label
           var percentageLabel = document.getElementById('percentage-label');
           percentageLabel.innerText = Math.round(adjustedRms * 100) + '%';
+
+          var isWinner = false;
+          if (adjustedRms >= 1 && !isWinner) {
+  soundLevelElement.style.height = '100%';
+  soundLevelElement.setAttribute('data-level', '100%');
+  percentageLabel.innerText = "Congrats! You are a winner";
+  isWinner = true; 
+          // Set the flag to true
+          scriptNode.disconnect();
+  // Trigger balloon animation
+          }
         };
       })
       .catch(function(err) {
