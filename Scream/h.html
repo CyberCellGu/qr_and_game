@@ -51,7 +51,7 @@
       transform: scaleY(-1); /* Flip the bar */
     }
 img{
-margin-bottom: ;
+margin-bottom:0 ;
 }
     #percentage-label {
       position: absolute;
@@ -61,6 +61,26 @@ margin-bottom: ;
       color: #000000;
       font-size: 14px;
       font-weight: bold;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 25px;
+      height: 25px;
+      background-color: #e74c3c;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      animation: confetti-fall linear infinite;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+      }
     }
   </style>
 </head>
@@ -137,7 +157,30 @@ margin-bottom: ;
           // Set the flag to true
           scriptNode.disconnect();
   // Trigger balloon animation
+  if (adjustedRms === 1) {
+    setInterval(createConfetti, 100);
           }
+        };
+
+        function createConfetti() {
+      var confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.background = getRandomColor();
+      confetti.style.animationDuration = (Math.random() * 3 + 1) + 's';
+      document.body.appendChild(confetti);
+
+      
+    }
+
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
         };
       })
       .catch(function(err) {
